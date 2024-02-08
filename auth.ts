@@ -30,6 +30,15 @@ export const {
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== "credentials" || !user.id) return true;
+
+      const existingUser = await getUserById(user.id);
+
+      if (!existingUser?.emailVerified) return false;
+
+      return true;
+    },
     //@ts-ignore
     async session({ token, session }) {
       if (token.sub && session.user) {
