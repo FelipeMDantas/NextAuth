@@ -2,7 +2,7 @@
 
 import { signIn } from "@/auth";
 import { getUserByEmail } from "@/data/user";
-import { generateVerificationToken } from "@/lib/generateVerificationToken";
+import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas";
