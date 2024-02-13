@@ -4,10 +4,12 @@ import { db } from "./lib/db";
 import authConfig from "@/auth.config";
 import { getUserById } from "./data/user";
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
+import { getAccountByIdUserId } from "./data/account";
 
 export type ExtendedUser = DefaultSession["user"] & {
   role: "ADMIN" | "USER";
   isTwoFactorEnabled: boolean;
+  isOAuth: boolean;
 };
 
 declare module "next-auth" {
@@ -65,6 +67,9 @@ export const {
 
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -76,6 +81,11 @@ export const {
 
       if (!existingUser) return token;
 
+      const existingAccount = await getAccountByIdUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
